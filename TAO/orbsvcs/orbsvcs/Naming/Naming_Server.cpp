@@ -484,7 +484,11 @@ TAO_Naming_Server::init_new_naming (CORBA::ORB_ptr orb,
           TAO::Storable_Factory* pf = 0;
           ACE_CString directory (ACE_TEXT_ALWAYS_CHAR (persistence_location));
           ACE_NEW_RETURN (pf, TAO::Storable_FlatFileFactory (directory), -1);
+#if defined (ACE_HAS_CPP11)
+          std::unique_ptr<TAO::Storable_Factory> persFactory(pf);
+#else
           auto_ptr<TAO::Storable_Factory> persFactory(pf);
+#endif /* ACE_HAS_CPP11 */
 
           // Use an auto_ptr to ensure that we clean up the factory in the case
           // of a failure in creating and registering the Activator.
@@ -492,7 +496,11 @@ TAO_Naming_Server::init_new_naming (CORBA::ORB_ptr orb,
             this->storable_naming_context_factory (context_size);
           // Make sure we got a factory
           if (cf == 0) return -1;
+#if defined (ACE_HAS_CPP11)
+          std::unique_ptr<TAO_Storable_Naming_Context_Factory> contextFactory (cf);
+#else
           auto_ptr<TAO_Storable_Naming_Context_Factory> contextFactory (cf);
+#endif /* ACE_HAS_CPP11 */
 
           // This instance will either get deleted after recreate all or,
           // in the case of a servant activator's use, on destruction of the
@@ -604,10 +612,10 @@ TAO_Naming_Server::init_new_naming (CORBA::ORB_ptr orb,
           //
           // Initialize Transient Naming Service.
           //
-          this->assign (size_t(ROOT), false,
-            TAO_Transient_Naming_Context::make_new_context (poa,
+          CosNaming::NamingContext_var new_context = TAO_Transient_Naming_Context::make_new_context (poa,
                                                             TAO_ROOT_NAMING_CONTEXT,
-                                                            context_size));
+                                                            context_size);
+          this->assign (size_t(ROOT), false, new_context.in());
 
         }
 
@@ -965,7 +973,8 @@ TAO_Naming_Server::assign (size_t ndx, bool take, CORBA::Object_ptr obj)
     return;
 
   b->ref_ = take ? obj : CORBA::Object::_duplicate (obj);
-  b->ior_ = this->orb_->object_to_string (b->ref_.in());
+  CORBA::String_var ior = this->orb_->object_to_string (b->ref_.in());
+  b->ior_ = ior.in();
 }
 
 

@@ -1795,7 +1795,12 @@ below.</p>
       <code>out32dll</code> directories.
   <li>Add <code>ssl=1</code> to your MPC
       <code>$ACE_ROOT/bin/MakeProjectCreator/config/default.features</code>
-      or <code>$ACE_ROOT/local.features</code> file, and re-run MPC to add
+      or <code>$ACE_ROOT/local.features</code> file.
+  <li>At the moment you are using OpenSSL v1.1 or
+      newer also add <code>openssl11=1</code> to your MPC
+      <code>$ACE_ROOT/bin/MakeProjectCreator/config/default.features</code>
+      or <code>$ACE_ROOT/local.features</code> file.
+  <li>Re-run MPC to add
       support for building the ACE_SSL library to your MSVC++
       workspaces and projects.
   <li>Open the <code>ACE.sln</code> solution, and refer to the ACE build
@@ -2018,7 +2023,7 @@ libraries.
 
   </p></li><li><b><a name="Linux">Linux</a></b><p>
 
-      ACE has been ported to <a href="http://www.cs.wustl.edu/%7Ecleeland/ace/">Linux</a> on
+      ACE has been ported to Linux on
       Intel, Alpha, and PowerPC platforms.  If you use a RedHat 5.x
       distribution, it's best to use RedHat 5.1 or later.  ACE works
       without any modifications on RedHat 5.1 and later, and on
